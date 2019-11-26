@@ -1,0 +1,12 @@
+Week1 Digital Signal processing
+
+6. With clipping, we have harmonics in the spectrum at 800 and 1200
+7. toplay/max(toplay)
+8. 100 is lumped with 200 in the theoretical spectrum, and non-existant in the recorded spectrum, 
+200, 500 and 1000 are severely reduced, 1500 and 2000 are the least reduced, and 4000 is still noticable.
+9. While the gaussian noise isn't perfectly flat across the frequency, it's close enough. The air/microphone filters out most stuff below 1000Hz and above 5000 Hz.
+This is corroborated by the spectogram, where beyond 7500 and below 500, the frequency drops with dB/Hz
+10. No
+11 Using laptop
+
+3.1 48 kHz speakers and microphone, so hard limit of 24 kHz
