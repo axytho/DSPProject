@@ -17,7 +17,15 @@ noisePower = noisePower(1:end-1)';
 trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
 trainrect = repmat(trainblock, 100, 1);
 size(trainrect);
+t = 1:32000;
+sinewave = sin(440*2*pi*t)';
 
+pulse = ones(10, 1);
+[simin,nbsecs,fs] = initparams(sinewave,pulse, Lfilter ,fs);
+sim('recplay');
+out = simout.signals.values;
+load chirp.mat;
+out_aligned = alignIO(out, pulse)
 %The problem seems to be that some pixels are just widely off, while others
 % are actually almost fine, the BER with this h is 3 times higher than with
 % a channel of 1
@@ -68,7 +76,7 @@ f = (1:size(HChannel, 1))*fs/Lfilter;
 tEst = (1:size(hEstimated, 2))/fs;
 fEst = (1:size(HEstimated, 2))*fs/Lfilter;
 
-hEstimated
+
 size(tEst)
 
 figure('name','Acoustic impulse and frequency response')

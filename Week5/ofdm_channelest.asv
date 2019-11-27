@@ -57,7 +57,7 @@ berTransmission = biterr(trainrect,rxBitStream); % Gray is best for constellatio
 hChannel = h';
 HChannel = fft(hChannel);
 
-
+h
 hEstimated = hEstimated(1:Lfilter)';
 HEstimated = fft(hEstimated);
 
@@ -65,25 +65,25 @@ HEstimated = fft(hEstimated);
 
 t = (1:size(hChannel, 1) )/fs;
 f = (1:size(HChannel, 1))*fs/Lfilter;
-tEst = (1:size(hEstimated, 1))/fs;
-fEst = (1:size(HEstimated, 1))*fs/Lfilter;
+tEst = (1:size(hEstimated, 2))/fs;
+fEst = (1:size(HEstimated, 2))*fs/Lfilter;
 
+hEstimated
 size(tEst)
-size(hEstimated)
 
 figure('name','Acoustic impulse and frequency response')
 
 subplot(2,1,1)
 plot(t, hChannel);
-title('Acoustic estimated impulse response h')
+title('Acoustic impulse response h')
 xlabel('t');
-ylabel('Acoustic estimated impulse response h');
+ylabel('Acoustic impulse response h');
 
 subplot(2,1,2)
 plot(f, mag2db(abs(HChannel)));
-title('Acoustic estimated impulse frequency response H')
+title('Acoustic impulse frequency response H')
 xlabel('f');
-ylabel('Acoustic estimated impulse frequency response H');
+ylabel('Acoustic impulse frequency response H');
 
 
 

@@ -13,11 +13,12 @@ QAMRECT = fft(bitSequence, [], 1);
 
 %QAMRECT(:, 12800) % Debug
 if train
-    size(QAMRECT);
-    size(trainBlockOrH);
     divisor = [0, trainBlockOrH.', 0, flip(conj(trainBlockOrH.'))].';
+    size(divisor)
     H = (QAMRECT(:, 1)./divisor);
-    h = ifft(H);
+    H(1) = 0;
+    H(N/2 +1) = 0;
+    h = ifft(H)
 else
     h = trainBlockOrH;
     h = [h, zeros(1, N - length(h))];
