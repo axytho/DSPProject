@@ -27,9 +27,19 @@ sim('recplay');
 out = simout.signals.values;
 load chirp.mat;
 out_aligned = alignIO(out, pulse);
-plot(out_aligned)
+
+figure();
+subplot(3,1,1);
+plot(out_aligned);
+
+subplot(3,1,2);
+plot(simin);
+
+subplot(3,1,3);
+plot(out);
+
 %plot(pulse)
-out_aligned(1:300)
+
 %The problem seems to be that some pixels are just widely off, while others
 % are actually almost fine, the BER with this h is 3 times higher than with
 % a channel of 1
@@ -81,35 +91,33 @@ tEst = (1:size(hEstimated, 2))/fs;
 fEst = (1:size(HEstimated, 2))*fs/Lfilter;
 
 
-size(tEst)
-
-figure('name','Acoustic impulse and frequency response')
-
-subplot(2,1,1)
-plot(t, hChannel);
-title('Acoustic impulse response h')
-xlabel('t');
-ylabel('Acoustic impulse response h');
-
-subplot(2,1,2)
-plot(f, mag2db(abs(HChannel)));
-title('Acoustic impulse frequency response H')
-xlabel('f');
-ylabel('Acoustic impulse frequency response H');
-
-
-
-figure('name','Estimated channel impulse and frequency response')
-
-subplot(2,1,1)
-plot(tEst, hEstimated);
-title('Estimated channel impulse response h')
-xlabel('t');
-ylabel('Estimated channel impulse response h');
-
-subplot(2,1,2)
-plot(fEst, mag2db(abs(HEstimated)));
-title('Estimated channel frequency response H')
-xlabel('f');
-ylabel('Estimated channel frequency response H');
+% figure('name','Acoustic impulse and frequency response')
+% 
+% subplot(2,1,1)
+% plot(t, hChannel);
+% title('Acoustic impulse response h')
+% xlabel('t');
+% ylabel('Acoustic impulse response h');
+% 
+% subplot(2,1,2)
+% plot(f, mag2db(abs(HChannel)));
+% title('Acoustic impulse frequency response H')
+% xlabel('f');
+% ylabel('Acoustic impulse frequency response H');
+% 
+% 
+% 
+% figure('name','Estimated channel impulse and frequency response')
+% 
+% subplot(2,1,1)
+% plot(tEst, hEstimated);
+% title('Estimated channel impulse response h')
+% xlabel('t');
+% ylabel('Estimated channel impulse response h');
+% 
+% subplot(2,1,2)
+% plot(fEst, mag2db(abs(HEstimated)));
+% title('Estimated channel frequency response H')
+% xlabel('f');
+% ylabel('Estimated channel frequency response H');
 
