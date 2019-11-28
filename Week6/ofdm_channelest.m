@@ -1,8 +1,13 @@
 % Exercise session 4: DMT-OFDM transmission scheme
 close all;
 % Convert BMP image to bitstream
+[bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
+
+trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
+trainrect = repmat(trainblock, 3, 1);
+
 fs= 16000;
-M=16;
+M=4;
 Nframe = 2002;
 SNR = 300;
 Lfilter = 400;
@@ -14,29 +19,23 @@ noiseStruct = load('noisePower.mat');
 noisePower = noiseStruct.noiseOut;
 noisePower = noisePower(1:end-1)';
 
-trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
-trainrect = repmat(trainblock, 100, 1);
-size(trainrect);
+
+size(trainrect)
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
 
-pulse = ones(500,1);
+pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
 
-[simin,nbsecs,fs] = initparams(sinewave,pulse, Lfilter ,fs);
-sim('recplay');
-out = simout.signals.values;
-load chirp.mat;
-out_aligned = alignIO(out, pulse);
 
-figure();
-subplot(3,1,1);
-plot(out_aligned);
-
-subplot(3,1,2);
-plot(simin);
-
-subplot(3,1,3);
-plot(out);
+% figure();
+% subplot(3,1,1);
+% plot(out_aligned);
+% 
+% subplot(3,1,2);
+% plot(simin);
+% 
+% subplot(3,1,3);
+% plot(out);
 
 %plot(pulse)
 
@@ -55,12 +54,25 @@ qamTrain = qam_mod(trainrect, M);
 [ofdmStream, remainder] = ofdm_mod(qamTrain, Nframe, Lprefix);
 %[ofdmStream, badbits] = ofdm_qam(bitStream, b, Lprefix);
 
-% Channel
+sizeTrain = length(ofdmStream);
 
-noisyOfdmStream = awgn(ofdmStream,SNR);
+% Channel
+[simin,nbsecs,fs] = initparams(ofdmStream,pulse, Lfilter ,fs);
+sim('recplay');
+out = simout.signals.values;
+load chirp.mat;
+Rx = alignIO(out, pulse, Lfilter);
+
+Rx = Rx(1:sizeTrain);
 %h = rand(1, Lfilter);
 %h = [0.5, 0.6, 0.7, 0.3, 0.4, 0.7];
-Rx = filter(h, 1, noisyOfdmStream);
+%Rx = filter(h, 1, noisyOfdmStream);
+figure();
+subplot(2, 1, 1);
+plot(Rx);
+
+subplot(2,1,2);
+plot(out);
 
 %rxOfdmStream = noisyOfdmStream;
 % OFDM demodulatio
@@ -107,17 +119,24 @@ fEst = (1:size(HEstimated, 2))*fs/Lfilter;
 % 
 % 
 % 
-% figure('name','Estimated channel impulse and frequency response')
+figure('name','Estimated channel impulse and frequency response')
+
+subplot(2,1,1)
+plot(tEst, hEstimated);
+title('Estimated channel impulse response h')
+xlabel('t');
+ylabel('Estimated channel impulse response h');
+
+subplot(2,1,2)
+plot(fEst, mag2db(abs(HEstimated)));
+title('Estimated channel frequency response H')
+xlabel('f');
+ylabel('Estimated channel frequency response H');
+
+%Construct image from bitstream
+%imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 % 
-% subplot(2,1,1)
-% plot(tEst, hEstimated);
-% title('Estimated channel impulse response h')
-% xlabel('t');
-% ylabel('Estimated channel impulse response h');
-% 
-% subplot(2,1,2)
-% plot(fEst, mag2db(abs(HEstimated)));
-% title('Estimated channel frequency response H')
-% xlabel('f');
-% ylabel('Estimated channel frequency response H');
+% % Plot images
+% subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+% subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;
 

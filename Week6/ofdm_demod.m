@@ -3,7 +3,7 @@ function [QAMResult, h] = ofdm_demod(OFDM,N, remainder, preLength, trainBlockOrH
 
 
 %Deprefix
-dimLength = length(OFDM)/(N + preLength);
+dimLength = length(OFDM)/(N + preLength)
 bitSequence = reshape(OFDM, N + preLength , dimLength);
 bitSequence = bitSequence((preLength+1):end, :);
 %bit = bitSequence(:, 12800);
@@ -19,6 +19,7 @@ if train
     H(1) = 0;
     H(N/2 +1) = 0;
     h = ifft(H);
+    
 else
     h = trainBlockOrH;
     h = [h, zeros(1, N - length(h))];
