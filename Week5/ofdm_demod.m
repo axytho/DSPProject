@@ -18,7 +18,7 @@ if train
     H = (QAMRECT(:, 1)./divisor);
     H(1) = 0;
     H(N/2 +1) = 0;
-    h = ifft(H)
+    h = ifft(H);
 else
     h = trainBlockOrH;
     h = [h, zeros(1, N - length(h))];

@@ -17,15 +17,19 @@ noisePower = noisePower(1:end-1)';
 trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
 trainrect = repmat(trainblock, 100, 1);
 size(trainrect);
-t = 1:32000;
+t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
 
-pulse = ones(10, 1);
+pulse = ones(500,1);
+
 [simin,nbsecs,fs] = initparams(sinewave,pulse, Lfilter ,fs);
 sim('recplay');
 out = simout.signals.values;
 load chirp.mat;
-out_aligned = alignIO(out, pulse)
+out_aligned = alignIO(out, pulse);
+plot(out_aligned)
+%plot(pulse)
+out_aligned(1:300)
 %The problem seems to be that some pixels are just widely off, while others
 % are actually almost fine, the BER with this h is 3 times higher than with
 % a channel of 1
