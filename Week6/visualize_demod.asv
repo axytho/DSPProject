@@ -1,0 +1,12 @@
+figure();
+
+subplot(2,2,1);
+title('Estimated time-domain channel impulse response');
+plot()
+
+subplot(2,2,2);
+
+
+subplot(2,2,3);
+
+subplot(2,2,4);
