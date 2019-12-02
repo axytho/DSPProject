@@ -26,23 +26,11 @@ qamStream = qam_mod(bitStream, M);
 A = [1;2;3];
 lenA = size(A);
 lenA = lenA(1);
-%A = repmat(A,3,1);
+A = repmat(A,3,1);
 B = [4;5;6];
 lenB = size(B);
 lenB = lenB(1);
-%B = repmat(B,3,1);
-%C = reshape([A B]', [], 1)
-str = [];
-b = 10;
-a = 2;
-k = 0;
-while (k < min(b,a))
-    str = [str; A; B];
-    k = k + 1;
-end
-if (a > b)
-    str = [str; repmat(A,a-b,1)];
-else
-    str = [str; repmat(B,b-a,1)];
-end
-str
+B = repmat(B,3,1);
+C = reshape([A B]', [], 1)
+for i=1:10
+    for j=1:
