@@ -1,4 +1,4 @@
-function [OFDM, remainder] = ofdm_mod(QAM, trainblock, N, varargin)
+function [OFDM, remainder] = ofdm_mod(QAMstream, trainblock, N, varargin)
 switch nargin
     case 2
         preLength = 0;
@@ -13,13 +13,13 @@ Lt = 100; % training frames
 k = 0; bits = [];
 
 while (k < max(Lt,Ld))
-    bits = [bits; QAM; trainblock];
+    bits = [bits; QAMstream; trainblock];
     k = k+1;
 end
 if (Lt > Ld)
     bits = [bits; repmat(trainblock,Lt-Ld,1)];
 else
-    bits = [bits; repmat(QAM,Ld-Lt,1)];
+    bits = [bits; repmat(QAMstream,Ld-Lt,1)];
 end
     
 % code to make sure we can get an int dimlength
