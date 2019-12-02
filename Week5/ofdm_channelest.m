@@ -3,8 +3,7 @@ close all;
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
-trainrect = repmat(trainblock, 3, 1);
+
 
 fs= 16000;
 M=4;
@@ -12,6 +11,8 @@ Nframe = 2002;
 SNR = 300;
 Lfilter = 400;
 Lprefix = 400;
+trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
+trainrect = repmat(trainblock, 3, 1);
 impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);
@@ -103,22 +104,22 @@ tEst = (1:size(hEstimated, 2))/fs;
 fEst = (1:size(HEstimated, 2))*fs/Lfilter;
 
 
-% figure('name','Acoustic impulse and frequency response')
-% 
-% subplot(2,1,1)
-% plot(t, hChannel);
-% title('Acoustic impulse response h')
-% xlabel('t');
-% ylabel('Acoustic impulse response h');
-% 
-% subplot(2,1,2)
-% plot(f, mag2db(abs(HChannel)));
-% title('Acoustic impulse frequency response H')
-% xlabel('f');
-% ylabel('Acoustic impulse frequency response H');
-% 
-% 
-% 
+figure('name','Acoustic impulse and frequency response')
+
+subplot(2,1,1)
+plot(t, hChannel);
+title('Acoustic impulse response h')
+xlabel('t');
+ylabel('Acoustic impulse response h');
+
+subplot(2,1,2)
+plot(f, mag2db(abs(HChannel)));
+title('Acoustic impulse frequency response H')
+xlabel('f');
+ylabel('Acoustic impulse frequency response H');
+
+
+
 figure('name','Estimated channel impulse and frequency response')
 
 subplot(2,1,1)
