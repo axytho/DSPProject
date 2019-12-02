@@ -17,6 +17,7 @@ noisePower = noisePower(1:end-1)';
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
+% Create trainblock
 trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
 trainrect = repmat(trainblock, 3, 1);
 qamStream = qam_mod(bitStream, M);

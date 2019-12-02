@@ -1,12 +1,20 @@
 figure();
+y = sin(x);
 
 subplot(2,2,1);
-title('Estimated time-domain channel impulse response');
-plot()
+title('Channel in time domain');
+plot(y);
+
 
 subplot(2,2,2);
-
+title('Transmitted image');
+plot(y);
 
 subplot(2,2,3);
+title('Channel in frequency domain (no DC)');
+plot(y);
 
 subplot(2,2,4);
+seconds = 5;
+title(['Received image after', num2str(seconds) ,'seconds']);
+plot(y);
