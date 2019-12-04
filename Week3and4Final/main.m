@@ -2,9 +2,9 @@
 
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
-M=1024;
+M=4;
 Nframe = 402;
-SNR = 35;
+SNR = 50;
 Lfilter = 400;
 Lprefix = 400;
 impulseresponseStruct = load('h.mat');
@@ -15,9 +15,9 @@ noisePower = noiseStruct.noiseOut;
 noisePower = noisePower(1:end-1)';
 gamma = 10;
 %b = floor(log2( 1 + (abs(H).^2)./( gamma * noisePower)));
-%b = floor(log2( 1 + (abs(H(1:length(h)/2)).^2)./( gamma * 1)));
-threshold = 0
-b = log2(M) * (abs(H(1:length(h)/2))>threshold)
+b = floor(log2( 1 + (abs(H(1:length(h)/2)).^2)./( gamma * 1)));
+% threshold = 0
+% b = log2(M) * (abs(H(1:length(h)/2))>threshold)
 
 %The problem seems to be that some pixels are just widely off, while others
 % are actually almost fine, the BER with this h is 3 times higher than with
@@ -27,10 +27,10 @@ b = log2(M) * (abs(H(1:length(h)/2))>threshold)
 % function, not beyond that.
 
 % QAM modulation
-qamStream = qam_mod(bitStream, M);
+%qamStream = qam_mod(bitStream, M);
 % OFDM modulation
-[ofdmStream, remainder] = ofdm_mod(qamStream, Nframe, Lprefix);
-%[ofdmStream, badbits] = ofdm_qam(bitStream, b, Lprefix);
+%[ofdmStream, remainder] = ofdm_mod(qamStream, Nframe, Lprefix);
+[ofdmStream, badbits] = ofdm_qam(bitStream, b, Lprefix);
 
 % Channel
 
@@ -41,15 +41,15 @@ rxOfdmStream = filter(h, 1, noisyOfdmStream);
 
 %rxOfdmStream = noisyOfdmStream;
 % OFDM demodulation
-rxQamStream = ofdm_demod(rxOfdmStream, Nframe, remainder, Lprefix, h);
-%rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
+%rxQamStream = ofdm_demod(rxOfdmStream, Nframe, remainder, Lprefix, h);
+rxBitStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
 % QAM demodulation
-rxBitStream = qam_demod(rxQamStream, M);
+%rxBitStream = qam_demod(rxQamStream, M);
 %rxBitStream = rxQamStream;
 
 % Compute BER
-berTransmission = biterr(bitStream,rxBitStream) % Gray is best for constellation
+berTransmission = biterr(bitStream,rxBitStream); % Gray is best for constellation
 
 % Construct image from bitstream
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);

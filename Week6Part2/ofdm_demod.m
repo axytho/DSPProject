@@ -16,7 +16,7 @@ if train
     divisorVector = [0, trainBlockOrH.', 0, flip(conj(trainBlockOrH.'))].';
     divisor = repmat(divisorVector, 1, dimLength);
     HBlock = (QAMRECT./divisor);
-    H = LSE(HBlock)
+    H = LSE(HBlock);
      H(1) = 0;
      H(N/2 +1) = 0;
     h = ifft(H);
