@@ -77,7 +77,7 @@ Rx = alignIO(out, pulse, Lfilter);
 Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
 
 
-[rxQamStream, HEstimated] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
+[rxQamStream, hEstimated] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
 
 %rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
