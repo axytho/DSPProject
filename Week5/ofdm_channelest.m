@@ -7,12 +7,12 @@ close all;
 
 fs= 16000;
 M=4;
-Nframe = 2002;
+Nframe = 402;
 SNR = 300;
 Lfilter = 400;
 Lprefix = 400;
 trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
-trainrect = repmat(trainblock, 3, 1);
+trainrect = repmat(trainblock, 10, 1);
 impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);

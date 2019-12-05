@@ -1,10 +1,12 @@
-clear all;
+% Exercise session 4: DMT-OFDM transmission scheme
 close all;
-
+% Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-Lt = 3; % controls size of our data block
+%set by user
+Lt = 3; %controls size of our data block
 Ld = 4;
+
 
 fs= 16000;
 M=4;
@@ -18,10 +20,32 @@ impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);
 
+
+
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
 
-pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
+pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1); zeros];
+
+
+% figure();
+% subplot(3,1,1);
+% plot(out_aligned);
+% 
+% subplot(3,1,2);
+% plot(simin);
+% 
+% subplot(3,1,3);
+% plot(out);
+
+%plot(pulse)
+
+%The problem seems to be that some pixels are just widely off, while others
+% are actually almost fine, the BER with this h is 3 times higher than with
+% a channel of 1
+% The channel heavily surpresses anything above 2000 Hz which is 1/4
+% of the 8000 = pi so we should only code in the first 4th of the 
+% function, not beyond that.
 
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
@@ -36,8 +60,10 @@ bitSequence = [bitSequence, [qamStream(end - dataRemainder + 1:end);zeros(dataFr
 dataBlock = [bitSequence; repmat(trainblock, Lt, dimLength+1)];
 ofdmSignal = dataBlock(:);
 
+
 % OFDM modulation
 [ofdmStream, remainder] = ofdm_mod(ofdmSignal, Nframe, Lprefix);
+%[ofdmStream, badbits] = ofdm_qam(bitStream, b, Lprefix);
 
 sizeTrain = length(ofdmStream);
 
@@ -50,7 +76,10 @@ Rx = alignIO(out, pulse, Lfilter);
 
 Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
 
+
 [rxQamStream, HEstimated] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
+
+%rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
 % QAM demodulation
 rxBitStream = qam_demod(rxQamStream, M);
@@ -59,46 +88,10 @@ rxBitStream = qam_demod(rxQamStream, M);
 % Compute BER
 berTransmission = biterr(bitStream,rxBitStream); % Gray is best for constellation
 
+
 % Construct image from bitstream
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
-[bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-hEstimated = ifft(HEstimated);
-hEstimated(:,5)
-HEstimated = 20*log10(abs(HEstimated));
-
-% PLOTS
-
-refreshRate = Nframe*(Lt + Ld)/fs;
-
-max_h = max(abs(hEstimated(:)));
-max_H = max(abs(HEstimated(:)));
-min_H = min(abs(HEstimated(:)));
-
-figure('Name','Visualisation of the demodulation');
-
-subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Transmitted image'); drawnow;
-
-for i=1:size(hEstimated,2)
-    
-    subplot(2,2,1)
-    plot(abs(hEstimated(:,i)))
-    title('Channel in time domain')
-    axis([0 20 max_h])
-    
-    subplot(2,2,3)
-    plot(abs(HEstimated(:,i)))
-    title('Channel in frequency domain (no DC)');
-    axis([-inf inf min_H max_H])
-   
-    if i*Nframe*Ld<length(rxBitStream)
-        imageRx = bitstreamtoimage(rxBitStream(1:i*Nframe*Ld), imageSize, bitsPerPixel);
-    else
-        imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
-    end
-    subplot(2,2,4); colormap(colorMap); image(imageRx); axis image;
-    title("Received image after " + num2str(round(refreshRate*i,2)) + " seconds"); 
-    drawnow;
-    
-    pause(refreshRate)
-end
+% Plot images
+subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;

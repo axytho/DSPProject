@@ -25,7 +25,7 @@ H = fft(h);
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
 
-pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
+pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1); zeros(20,1); ones(10,1)];
 
 
 % figure();

@@ -36,7 +36,7 @@ pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
 % function, not beyond that.
 
 % QAM modulation
-qamTrain = qam_mod(trainrect, M);
+qamTrain = qam_mod(bitStream, M);
 
 
 % OFDM modulation
@@ -76,6 +76,13 @@ rxBitStream = qam_demod(rxQamStream, M);
 
 % Compute BER
 berTransmission = biterr(trainrect,rxBitStream); % Gray is best for constellation
+
+imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
+
+% Plot images
+subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;
+
 
 hChannel = h';
 HChannel = fft(hChannel);

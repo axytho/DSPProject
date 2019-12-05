@@ -3,7 +3,7 @@ close all;
 
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-Lt = 3; % controls size of our data block
+Lt = 1; % controls size of our data block
 Ld = 4;
 
 fs= 16000;
@@ -21,7 +21,9 @@ H = fft(h);
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
 
-pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
+t = 0:1/fs:1;
+pulse = sin(2*pi*t*1000).';
+%pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
 
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
@@ -64,7 +66,6 @@ imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
 hEstimated = ifft(HEstimated);
-hEstimated(:,5)
 HEstimated = 20*log10(abs(HEstimated));
 
 % PLOTS

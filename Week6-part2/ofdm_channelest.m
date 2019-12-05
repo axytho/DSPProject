@@ -9,8 +9,9 @@ Lprefix = 400;
 trainblock = randi([0, 1], (Nframe/2-1)*M, 1);
 trainrect = repmat(trainblock, 10, 1);
 
-pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
-
+%pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
+t = 0:1/fs:1;
+pulse = sin(2*pi*t*1000).';
 qamTrain = qam_mod(trainrect, M);
 
 
@@ -42,9 +43,12 @@ H = fft(h);
 noiseStruct = load('noisePower.mat');
 noisePower = noiseStruct.noiseOut;
 noisePower = noisePower(1:end-1).';
-gamma = 1;
+gamma = 0.05;
 %b = floor(log2( 1 + (abs(H).^2)./( gamma * noisePower)));
-b = floor(log2( 1 + (abs(H(1:length(h)/2)).^2)./( gamma * 1)));
+%b = floor(log2( 1 + (abs(H(1:length(h)/2)).^2)./( gamma * 1)));
+
+btest = load('btest.mat');
+b = btest.b;
 
 %If we want to be able to take a certain amount of stuff, order h, then
 %take the first 30% values and set your threshold so that those get taken
