@@ -91,7 +91,6 @@ rxBitStream = qam_demod(rxQamStream, M);
 % Compute BER
 berTransmission = biterr(bitStream,rxBitStream); % Gray is best for constellation
 
-
 % Construct image from bitstream
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 

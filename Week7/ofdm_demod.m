@@ -21,10 +21,10 @@ assert(size(HMatrix,2) == 1); %This is unique to 7.1, because we're only sending
 data = block(1:Ld*(N/2-1), :);
 Yk = reshape(data, N/2-1, Ld);
 %Hblock = repmat(HMatrix, Ld, 1);
-WkMatrix = zeros(N/2-1, Ld);
-for i=1:(N/2-1)
-    WkMatrix(i, :) = DDequalization(HMatrix(i), Yk(i, :), M);
-end
+
+
+WkMatrix = DDequalization(HMatrix, Yk, M);
+
 %WkMatrix = repmat((WkMatrix(:,1)), 1, Ld); If you want to simulate week 6
 % with only one data packet and one training packet
 
