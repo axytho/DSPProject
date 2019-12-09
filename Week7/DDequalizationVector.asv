@@ -15,19 +15,33 @@ iterations = 76;
 WkMatrix = [Wk; zeros(iterations,1)];
 %mu = 0.9;
 mu = linspace(0.5,1,6);
-figure('Name','Error signals over the number of iterations')
 for i = 1:length(mu)
     for j = 1:iterations
         XkEstimated = qam_mod(qam_demod(conj(WkMatrix(j)) * Yk(j+1), M), M);
         WkMatrix(j+1) = WkMatrix(j) + mu(i) * Yk(j+1) / abs(Yk(j+1))^2 *(XkEstimated - conj(WkMatrix(j)) * Yk(j+1));
     end
     error = abs(conj(WkMatrix) - 1./( Hk(1:(iterations+1))));
-    plot(1:length(WkMatrix), error,'displayname',num2str(mu(i)));
+    plot(1:length(WkMatrix), error,'displayname',num2mu');
+    title("Error signals over the number of iterations");
     hold on;
 end
-title("Error signal over the number of iterations");
-xlabel('Nb of iterations')
-ylabel('Error')
-xlim([0 iterations])
-[hleg] = legend('show');
-title(hleg,'Stepsize (mu)');
+legend show;
+
+    
+%for i=1:len(mu)
+%    plot(1:length(WkMatrix(i)), error);
+%    hold on
+%end
+
+% Implementing normalized LMS
+%{
+WkMatrix = [Wk; zeros(iterations, 1)];
+mu = 0.9;
+for j =1:iterations
+    XkEstimated = qam_mod(qam_demod(conj(WkMatrix(j)) * Yk(j+1), M), M);
+    WkMatrix(j+1) = WkMatrix(j) + mu * Yk(j+1) / abs(Yk(j+1))^2 *(XkEstimated - conj(WkMatrix(j)) * Yk(j+1));
+end
+error = abs(conj(WkMatrix) - 1./( Hk(1:(iterations+1))));
+Hk
+plot(1:length(WkMatrix), error);
+%}
