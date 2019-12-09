@@ -12,7 +12,7 @@ QAMRECT = fft(bitSequence, [], 1);
 QAMValues = QAMRECT(2:(N/2), 1:end-1);
 QAMRaw = [QAMValues(:); QAMRECT(2:remainder+1, end)];
 % Now we correct for the remainder
-size(QAMRaw)
+size(QAMRaw);
 
 block= reshape(QAMRaw ,(Ld+Lt)*(N/2-1), length(QAMRaw)/ ((Ld+Lt)*(N/2-1)));
 trainMatrix = block((Ld*(N/2-1)+ 1):end, :);
