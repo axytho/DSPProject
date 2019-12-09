@@ -17,7 +17,7 @@ size(QAMRaw);
 block= reshape(QAMRaw ,(Ld+Lt)*(N/2-1), length(QAMRaw)/ ((Ld+Lt)*(N/2-1)));
 trainMatrix = block((Ld*(N/2-1)+ 1):end, :);
 HMatrix = getHMatrix(trainMatrix, trainblock, Lt, N);
-Hblock = repmat(HMatrix, Ld, 1, 1);
+Hblock = repmat(HMatrix, Ld, 1);
 correctedDataBlock = block(1:Ld*(N/2-1), :)./ Hblock;
 
 QAMResult = correctedDataBlock(:);

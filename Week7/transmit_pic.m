@@ -23,7 +23,7 @@ impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);
 
-Ld =  length(bitStream)/(dataFrameSize*log2(M)) + 1
+Ld =  floor(length(bitStream)/(dataFrameSize*log2(M))) + 1
 
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
