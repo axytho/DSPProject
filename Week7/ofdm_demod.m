@@ -25,11 +25,12 @@ WkMatrix = zeros(N/2-1, Ld);
 for i=1:(N/2-1)
     WkMatrix(i, :) = DDequalization(HMatrix(i), Yk(i, :), M);
 end
-WkMatrix = repmat((WkMatrix(:,1)), 1, Ld);
+%WkMatrix = repmat((WkMatrix(:,1)), 1, Ld); If you want to simulate week 6
+% with only one data packet and one training packet
 
 
-QAMResult = data(:) .* WkMatrix(:);
-Hblock = 1./WkMatrix;
+QAMResult = data(:) .* conj(WkMatrix(:));
+Hblock = 1./conj(WkMatrix);
 
 
 QAMResult = QAMResult(1:end-Ld*(N/2-1)+dataRemainder);
