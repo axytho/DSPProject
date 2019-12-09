@@ -1,4 +1,4 @@
-function [QAMResult, Hblock, HMatrix] = ofdm_demod(OFDM,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, M)
+function [QAMResult, Hblock] = ofdm_demod(OFDM,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder)
 
 %Deprefix
 dimLength = length(OFDM)/(N + preLength);
@@ -17,21 +17,16 @@ HMatrix = getHMatrix(trainMatrix, trainblock, Lt, N);
 assert(size(HMatrix,2) == 1); %This is unique to 7.1, because we're only sending one
 
 
-
-data = block(1:Ld*(N/2-1), :);
-Yk = reshape(data, N/2-1, Ld);
 %Hblock = repmat(HMatrix, Ld, 1);
-WkMatrix = zeros(N/2-1, Ld);
+
 for i=1:(N/2-1)
-    WkMatrix(i, :) = DDequalization(HMatrix(i), Yk(i, :), M);
+    
 end
-WkMatrix = repmat((WkMatrix(:,1)), 1, Ld);
+correctedDataBlock = block(1:Ld*(N/2-1), :)./ Hblock;
 
 
-QAMResult = data(:) .* WkMatrix(:);
-Hblock = 1./WkMatrix;
 
-
+QAMResult = correctedDataBlock(:);
 QAMResult = QAMResult(1:end-Ld*(N/2-1)+dataRemainder);
 end
 

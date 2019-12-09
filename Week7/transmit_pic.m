@@ -4,7 +4,7 @@ close all;
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
 %set by user
-Lt = 1; %controls size of our data block
+Lt = 5; %controls size of our data block
 
 
 
@@ -23,7 +23,7 @@ impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);
 
-Ld =  floor(length(bitStream)/(dataFrameSize*log2(M))) + 1
+Ld =  floor(length(bitStream)/(dataFrameSize*log2(M))) + 1;
 
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
@@ -80,7 +80,7 @@ Rx = alignIO(out, pulse, Lfilter);
 Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
 
 
-[rxQamStream, HEstimated] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
+[rxQamStream, HEstimated, HMatrix] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder, M);
 
 %rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
