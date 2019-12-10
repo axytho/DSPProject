@@ -46,7 +46,7 @@ end
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
 
-BWUsage = 30;
+BWUsage = 100;
 numberLargest= floor(BWUsage/100 * (Nframe/2 -1));
 
 Ld =  floor(length(bitStream)/(numberLargest*log2(M))) + 1;
