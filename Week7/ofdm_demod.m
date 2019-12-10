@@ -32,7 +32,6 @@ QAMResult = data(:) .* conj(WkMatrix(:));
 Hblock = 1./conj(WkMatrix);
 
 QAMReshapeForOOB = reshape(QAMResult, N/2 -1, Ld);
-QAMReshapeForOOB(:, 5)
 QAMResultOOB = QAMReshapeForOOB(OOBIndices, :);
 QAMResult = QAMResultOOB(:);
 

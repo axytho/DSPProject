@@ -4,6 +4,7 @@ close all;
 
 %set by user
 Lt = 5; %controls size of our data block
+Ld = 7;
 fs= 16000;
 M=64;
 Nframe = 2002;
@@ -16,10 +17,11 @@ dataFrameSize = (Nframe/2-1);
 trainblockbits = randi([0, 1], dataFrameSize*log2(M), 1); % M because bits not qam
 
 
-randomImpulseResponse1 = -1 + 2* rand(Nframe, 1); % Not a good model obviously
-randomImpulseResponse2 = -1 + 2* rand(Nframe, 1);
-[H1, H2, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2);
+randomImpulseResponse1 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe/2-1-Lfilter, 1)]; % Not a good model obviously
+randomImpulseResponse2 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe/2-1-Lfilter, 1)];
+[a, b, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2);
 %H12 is obviously larger than H1 and H2 for all
+%(a.*conj(a) + b.*conj(b))
 
 t = (1:5000)*1/16000;
 
@@ -32,30 +34,21 @@ pulse = sin(2*pi*t*2000).';
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
 
-BWUsage = 100; %As long as this is 100, nothing should break
-numberLargest= floor(BWUsage/100 * (Nframe/2 -1));
 
-Ld =  floor(length(bitStream)/(numberLargest*log2(M))) + 1;
-frequencyResponseEstimated = fft(impulseResponseEstimated);
+numberLargest=  (Nframe/2 -1);
 
-[~, OOBIndices] = maxk(frequencyResponseEstimated(1:Nframe/2-1), numberLargest);
-OOBIndices = sort(OOBIndices);
+
 % do this: https://www.mathworks.com/matlabcentral/answers/300929-add-zero-rows-to-a-matrix
 
 qamStream = qam_mod(bitStream, M);
 % same thing as OFDM MOD and DataFrameSize== N/2-1
 dimLength = floor(length(qamStream)/(Ld*numberLargest));
-assert(dimLength == 0);
 dataRemainder = mod(length(qamStream), (Ld*numberLargest));
 
 
 bitSequence = reshape(qamStream(1:((Ld*numberLargest)*dimLength)), (Ld*numberLargest) , dimLength);
 % and add the remainder plus trailing zeros
 bitSequence = [bitSequence, [qamStream(end - dataRemainder + 1:end);zeros(Ld*numberLargest-dataRemainder,1)]];
-% Now we must expand the bitsequence
-OOBBlock = zeros(Nframe/2 - 1 ,(dimLength+1) * Ld);
-OOBBlock(OOBIndices, :) = reshape(bitSequence, numberLargest ,(dimLength+1) * Ld);
-bitSequence = reshape(OOBBlock, (Nframe/2 - 1)*Ld,  dimLength+1);
 % now we add however many Lt*trainblock frames we need to the bottom
 dataBlock = [repmat(trainblock, Lt, dimLength+1); bitSequence];
 ofdmSignal = dataBlock(:);
@@ -63,22 +56,15 @@ ofdmSignal = dataBlock(:);
 
 
 % OFDM modulation
-[ofdmStream, remainder] = ofdm_mod(ofdmSignal, Nframe, Lprefix);
-%[ofdmStream, badbits] = ofdm_qam(bitStream, b, Lprefix);
+[ofdmStream1, ofdmStream2, remainder] = ofdm_mod_stereo(ofdmSignal, Nframe, Lprefix, a, b);
 
-sizeTrain = length(ofdmStream);
 
 % Channel
-[simin,nbsecs,fs] = initparams(ofdmStream,pulse, Lfilter ,fs);
-sim('recplay');
-out = simout.signals.values;
-load chirp.mat;
-Rx = alignIO(out, pulse, Lfilter);
-
-Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
+Received1 = filter(randomImpulseResponse1, 1, ofdmStream1);
+Received2 = filter(randomImpulseResponse2, 1, ofdmStream2);
 
 
-[rxQamStream, HEstimated, HMatrix] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder, M, OOBIndices);
+[rxQamStream, HEstimated] = ofdm_demod_stereo(Received1, Received2, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder,  H12);
 
 %rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
