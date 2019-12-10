@@ -1,5 +1,5 @@
 clear all;
-close all;
+%close all;
 
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
