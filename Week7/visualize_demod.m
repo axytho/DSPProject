@@ -3,9 +3,7 @@ close all;
 
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-Lt = 1; % controls size of our data block
-Ld = 4;
-
+Lt = 5; %controls size of our data block
 fs= 16000;
 M=4;
 Nframe = 2002;
@@ -17,13 +15,10 @@ trainblockbits = randi([0, 1], dataFrameSize*M/2, 1); % M because bits not qam
 impulseresponseStruct = load('h.mat');
 h = impulseresponseStruct.h;
 H = fft(h);
-
+Ld =  floor(length(bitStream)/(dataFrameSize*log2(M))) + 1;
 t = (1:32000)*1/16000;
 sinewave = sin(440*2*pi*t)';
-
-t = 0:1/fs:1;
-pulse = sin(2*pi*t*1000).';
-%pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1)];
+pulse = [ones(10,1); zeros(240,1); ones(10,1); zeros(230,1); ones(10,1); zeros(20,1); ones(10,1)];
 
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
@@ -52,11 +47,10 @@ Rx = alignIO(out, pulse, Lfilter);
 
 Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
 
-[rxQamStream, HEstimated] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
+[rxQamStream, HEstimated, HMatrix] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder, M);
 
 % QAM demodulation
 rxBitStream = qam_demod(rxQamStream, M);
-%rxBitStream = rxQamStream;
 
 % Compute BER
 berTransmission = biterr(bitStream,rxBitStream); % Gray is best for constellation
@@ -70,7 +64,7 @@ HEstimated = 20*log10(abs(HEstimated));
 
 % PLOTS
 
-refreshRate = Nframe*(Lt + Ld)/fs;
+refreshRate = Nframe*(Lt)/fs
 
 max_h = max(abs(hEstimated(:)));
 max_H = max(abs(HEstimated(:)));
@@ -92,8 +86,8 @@ for i=1:size(hEstimated,2)
     title('Channel in frequency domain (no DC)');
     axis([-inf inf min_H max_H])
    
-    if i*Nframe*Ld<length(rxBitStream)
-        imageRx = bitstreamtoimage(rxBitStream(1:i*Nframe*Ld), imageSize, bitsPerPixel);
+    if i*Nframe<length(rxBitStream)
+        imageRx = bitstreamtoimage(rxBitStream(1:i*Nframe), imageSize, bitsPerPixel);
     else
         imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
     end
