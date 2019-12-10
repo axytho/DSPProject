@@ -1,4 +1,4 @@
-function [QAMResult, Hblock, HMatrix] = ofdm_demod(OFDM,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, M)
+function [QAMResult, Hblock, HMatrix] = ofdm_demod_stereo(OFDM,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, M)
 
 %Deprefix
 dimLength = length(OFDM)/(N + preLength);

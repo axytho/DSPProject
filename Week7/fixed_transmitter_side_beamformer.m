@@ -1,7 +1,8 @@
-function [a,b] = fixed_transmitter_side_beamformer(impulse1,impulse2)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
+function [H1, H2, H12] = fixed_transmitter_side_beamformer(impulseA, impulseB)
+H1 = fft(impulseA);
+H2 = fft(impulseB);
+H12 = sqrt(H1.*conj(H1)+H2.*conj(H2));
+f = 1:length(H1);
+plot(f, abs(H1), f, abs(H2), f, abs(H12));
+legend({'H1', 'H2', 'H12'});
 end
-
