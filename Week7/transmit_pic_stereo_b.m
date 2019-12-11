@@ -45,15 +45,16 @@ else
 end
 
 [a, b, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2); %1333 errors
+% and 1505 when live
 
     %Basically no difference between H1 and H2
-    %a = ones(Nframe, 1);
-    %b = zeros(Nframe, 1); %7583 errors
-    %H12 = fft(randomImpulseResponse1);
+%     a = ones(Nframe, 1);
+%     b = zeros(Nframe, 1); %7583 errors
+%     H12 = fft(randomImpulseResponse1); %1445 errors when going on a only live
 
-    % a = zeros(Nframe, 1);
-    % b = ones(Nframe, 1);
-    % H12 = fft(randomImpulseResponse2);
+%     a = zeros(Nframe, 1);
+%     b = ones(Nframe, 1);
+%     H12 = fft(randomImpulseResponse2); %1460 errors
 
 
 
@@ -107,6 +108,8 @@ sizeTrain = length(ofdmStream1);
 
 % Channel
 [simin,nbsecs,fs] = initparams_stereo(ofdmStream1, ofdmStream2,pulse, Lfilter ,fs);
+%[simin,nbsecs,fs] = initparams_stereo(ofdmStream1, ofdmStream1,pulse, Lfilter ,fs);
+%[simin,nbsecs,fs] = initparams_stereo(ofdmStream2, ofdmStream2,pulse, Lfilter ,fs);
 sim('recplay');
 out = simout.signals.values;
 load chirp.mat;
