@@ -1,4 +1,4 @@
-close all;
+%close all;
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
@@ -8,19 +8,13 @@ fs= 16000;
 M=64;
 Nframe = 2002;
 
-
-
 SNR = 300;
 Lfilter = 400;
 Lprefix = 400;
 dataFrameSize = (Nframe/2-1);
 trainblockbits = randi([0, 1], dataFrameSize*log2(M), 1); % M because bits not qam
 
-
-
-
 t = (1:5000)*1/16000;
-
 
 pulse = sin(2*pi*t*2000).';
 
@@ -62,7 +56,6 @@ dimLength = floor(length(qamStream)/(Ld*numberLargest));
 assert(dimLength == 0);
 dataRemainder = mod(length(qamStream), (Ld*numberLargest));
 
-
 bitSequence = reshape(qamStream(1:((Ld*numberLargest)*dimLength)), (Ld*numberLargest) , dimLength);
 % and add the remainder plus trailing zeros
 bitSequence = [bitSequence, [qamStream(end - dataRemainder + 1:end);zeros(Ld*numberLargest-dataRemainder,1)]];
@@ -73,8 +66,6 @@ bitSequence = reshape(OOBBlock, (Nframe/2 - 1)*Ld,  dimLength+1);
 % now we add however many Lt*trainblock frames we need to the bottom
 dataBlock = [repmat(trainblock, Lt, dimLength+1); bitSequence];
 ofdmSignal = dataBlock(:);
-
-
 
 % OFDM modulation
 [ofdmStream, remainder] = ofdm_mod(ofdmSignal, Nframe, Lprefix);
@@ -91,7 +82,6 @@ Rx = alignIO(out, pulse, Lfilter);
 
 Rx = Rx(1:sizeTrain);%Will fail if align IO did not find the correct end result
 
-
 [rxQamStream, HEstimated, HMatrix] = ofdm_demod(Rx, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder, M, OOBIndices);
 
 %rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
@@ -101,11 +91,15 @@ rxBitStream = qam_demod(rxQamStream, M);
 %rxBitStream = rxQamStream;
 
 % Compute BER
-[berTransmission, ratio] = biterr(bitStream,rxBitStream) % Gray is best for constellation
+[berTransmission, berRatio] = biterr(bitStream,rxBitStream) % Gray is best for constellation
 
 % Construct image from bitstream
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 
 % Plot images
+figure('name','Transmit picture (no bitloading)')
 subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;
+%text_ber = subplot(4,1,2); 
+%text(0.5,0.5,'test');
+%set(text_ber,'visible','off');

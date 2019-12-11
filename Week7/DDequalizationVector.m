@@ -26,7 +26,7 @@ for i = 1:length(mu)
     hold on;
 end
 title("Error signal over the number of iterations");
-xlabel('Nb of iterations')
+xlabel('Number of iterations')
 ylabel('Error')
 xlim([0 iterations])
 [hleg] = legend('show');

@@ -40,7 +40,7 @@ end
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
 
-BWUsage = 100;
+BWUsage = 50;
 numberLargest= floor(BWUsage/100 * (Nframe/2 -1));
 
 Ld =  floor(length(bitStream)/(numberLargest*log2(M))) + 1;
@@ -95,43 +95,11 @@ rxBitStream = qam_demod(rxQamStream, M);
 
 % Construct image from bitstream
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
-[bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
-hEstimated = ifft(HEstimated);
-HEstimated = 20*log10(abs(HEstimated));
-
-% PLOTS
-
-refreshRate = Nframe*(Lt)/fs
-
-max_h = max(abs(hEstimated(:)));
-max_H = max(abs(HEstimated(:)));
-min_H = min(abs(HEstimated(:)));
-
-figure('Name','Visualisation of the demodulation');
-
-subplot(2,2,2); colormap(colorMap); image(imageData); axis image; title('Transmitted image'); drawnow;
-
-for i=1:size(hEstimated,2)
-    
-    subplot(2,2,1)
-    plot(abs(hEstimated(:,i)))
-    title('Channel in time domain')
-    axis([0 200 0 max_h])
-    
-    subplot(2,2,3)
-    plot(abs(HEstimated(:,i)))
-    title('Channel in frequency domain (no DC)');
-    axis([-inf inf min_H max_H])
-   
-    if i*Nframe<length(rxBitStream)
-        imageRx = bitstreamtoimage(rxBitStream(1:i*Nframe), imageSize, bitsPerPixel);
-    else
-        imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
-    end
-    subplot(2,2,4); colormap(colorMap); image(imageRx); axis image;
-    title("Received image after " + num2str(round(refreshRate*i,2)) + " seconds"); 
-    drawnow;
-    
-    pause(refreshRate)
-end
+% Plot images
+figure('name','Transmit picture (bitloading)')
+subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
+subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;
+%text_ber = subplot(4,1,2); 
+%text(0.5,0.5,'test');
+%set(text_ber,'visible','off');
