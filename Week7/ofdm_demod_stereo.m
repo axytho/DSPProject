@@ -1,6 +1,4 @@
-function [QAMResult, Hblock] = ofdm_demod_stereo(Received1, Received2,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, H12)
-[QAMResultA, Hblock] = ofdm_demod_beamformer(Received1,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, H12);
-[QAMResultB, ~] = ofdm_demod_beamformer(Received2,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder, H12);
-QAMResult = QAMResultA + QAMResultB;
+function [QAMResult, Hblock] = ofdm_demod_stereo(Received, N, remainder, preLength, trainblock, Ld, Lt, dataRemainder)
+[QAMResult, Hblock] = ofdm_demod_beamformer(Received,N, remainder, preLength, trainblock, Ld, Lt, dataRemainder);
 end
 

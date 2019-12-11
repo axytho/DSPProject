@@ -9,13 +9,13 @@ bitSequence = reshape(QAM(1:((N/2-1)*dimLength)), (N/2 - 1) , dimLength);
 bitSequence = [bitSequence, [QAM(end - remainder + 1:end);zeros(N/2-1-remainder,1)]];
 
 % multiply into 2 pieces, then send both
-bitSequence1 = bitSequence .* repmat(a, 1, dimLength+1);
+bitSequence1 = bitSequence .* repmat(a(2:N/2), 1, dimLength+1);
 total1 = [zeros(1, dimLength+(1)); bitSequence1; zeros(1, dimLength+(1)); flip(conj(bitSequence1), 1)];
 OFDMRECT1 = ifft(total1, [], 1);
 OFDMPREFIXED1 = [OFDMRECT1(end-preLength+1:end, :); OFDMRECT1];
 ofdmStream1 = OFDMPREFIXED1(:);
 
-bitSequence = bitSequence .* repmat(b, 1, dimLength+1);
+bitSequence = bitSequence .* repmat(b(2:N/2), 1, dimLength+1);
 total = [zeros(1, dimLength+(1)); bitSequence; zeros(1, dimLength+(1)); flip(conj(bitSequence), 1)];
 OFDMRECT = ifft(total, [], 1);
 OFDMPREFIXED = [OFDMRECT(end-preLength+1:end, :); OFDMRECT];

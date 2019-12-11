@@ -1,9 +1,12 @@
+
+
+
 close all;
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
 %set by user
-Lt = 5; %controls size of our data block
+Lt = 3; %controls size of our data block
 Ld = 7;
 fs= 16000;
 M=64;
@@ -17,9 +20,19 @@ dataFrameSize = (Nframe/2-1);
 trainblockbits = randi([0, 1], dataFrameSize*log2(M), 1); % M because bits not qam
 
 
-randomImpulseResponse1 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe/2-1-Lfilter, 1)]; % Not a good model obviously
-randomImpulseResponse2 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe/2-1-Lfilter, 1)];
-[a, b, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2);
+randomImpulseResponse1 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe-Lfilter, 1)]; % Not a good model obviously
+
+randomImpulseResponse2 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe-Lfilter, 1)];
+[a, b, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2); %1333 errors
+%a = ones(Nframe, 1);
+%b = zeros(Nframe, 1); %7583 errors
+%H12 = fft(randomImpulseResponse1);
+
+% a = zeros(Nframe, 1);
+% b = ones(Nframe, 1);
+% H12 = fft(randomImpulseResponse2);
+
+
 %H12 is obviously larger than H1 and H2 for all
 %(a.*conj(a) + b.*conj(b))
 
@@ -58,19 +71,21 @@ ofdmSignal = dataBlock(:);
 % OFDM modulation
 [ofdmStream1, ofdmStream2, remainder] = ofdm_mod_stereo(ofdmSignal, Nframe, Lprefix, a, b);
 
-
+SNR = 35;
 % Channel
 Received1 = filter(randomImpulseResponse1, 1, ofdmStream1);
 Received2 = filter(randomImpulseResponse2, 1, ofdmStream2);
-
-
-[rxQamStream, HEstimated] = ofdm_demod_stereo(Received1, Received2, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder,  H12);
+Received1 = awgn(Received1, SNR);
+Received2 = awgn(Received2, SNR);
+[rxQamStream, HEstimated] = ofdm_demod_stereo(Received1 + Received2, Nframe, remainder, Lprefix, trainblock, Ld, Lt, dataRemainder);
 
 %rxQamStream = ofdm_deqam(rxOfdmStream, b, badbits, Lprefix, h);
 
 % QAM demodulation
 rxBitStream = qam_demod(rxQamStream, M);
 %rxBitStream = rxQamStream;
+
+
 
 % Compute BER
 [berTransmission, ratio] = biterr(bitStream,rxBitStream) % Gray is best for constellation
