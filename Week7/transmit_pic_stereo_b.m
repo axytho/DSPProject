@@ -1,6 +1,3 @@
-
-
-
 close all;
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
