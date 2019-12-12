@@ -1,6 +1,3 @@
-
-
-
 close all;
 % Convert BMP image to bitstream
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
@@ -24,8 +21,8 @@ randomImpulseResponse1 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe-Lfilter, 1)]; %
 
 randomImpulseResponse2 = [-1 + 2* rand(Lfilter, 1); zeros(Nframe-Lfilter, 1)];
 [a, b, H12] = fixed_transmitter_side_beamformer(randomImpulseResponse1, randomImpulseResponse2); %1333 errors
-%a = ones(Nframe, 1);
-%b = zeros(Nframe, 1); %7583 errors
+% a = ones(Nframe, 1);
+% b = zeros(Nframe, 1); %7583 errors
 %H12 = fft(randomImpulseResponse1);
 
 % a = zeros(Nframe, 1);
@@ -94,5 +91,6 @@ rxBitStream = qam_demod(rxQamStream, M);
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 
 % Plot images
+figure()
 subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;

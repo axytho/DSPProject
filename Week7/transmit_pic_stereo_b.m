@@ -3,12 +3,12 @@ close all;
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
 %set by user
-Lt = 3; %controls size of our data block
+Lt = 3; %no difference whether we're using 1 our 5
 Ld = 7;
 fs= 16000;
-M=64;
+M=8;
 Nframe = 2002;
-Lfilter = 400;
+Lfilter = 100;
 Lprefix = 400;
 dataFrameSize = (Nframe/2-1);
 
@@ -93,6 +93,7 @@ ofdmSignal = dataBlock(:);
 % OFDM modulation
 [ofdmStream1, ofdmStream2, remainder] = ofdm_mod_stereo(ofdmSignal, Nframe, Lprefix, a, b);
 
+
 % SNR = 600;
 % % Channel
 % Received1 = filter(randomImpulseResponse1, 1, ofdmStream1);
@@ -132,5 +133,6 @@ rxBitStream = qam_demod(rxQamStream, M);
 imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
 
 % Plot images
+figure()
 subplot(2,1,1); colormap(colorMap); image(imageData); axis image; title('Original image'); drawnow;
 subplot(2,1,2); colormap(colorMap); image(imageRx); axis image; title(['Received image']); drawnow;
