@@ -5,7 +5,7 @@
 %set by user
 Lt = 5; %controls size of our data block
 fs= 16000;
-M=64;
+M=8;
 Nframe = 2002;
 
 SNR = 300;
@@ -19,6 +19,7 @@ t = (1:5000)*1/16000;
 pulse = sin(2*pi*t*2000).';
 
 OOK = true;
+
 % Find initial channel estimate if doing OOK
 if OOK
     trainblock = randi([0, 1], (Nframe/2-1)*log2(M), 1);
@@ -34,8 +35,6 @@ if OOK
     Rx = Rx(1:sizeTrain);
     [~, impulseResponseEstimated] = ofdm_demodTraining(Rx, Nframe, remainder, Lprefix, qamTrain(1:(Nframe/2 - 1), :), true);
 end
-% figure();
-% subplot(3,1,1);
 
 % QAM modulation
 trainblock = qam_mod(trainblockbits, M);
@@ -74,6 +73,7 @@ ofdmSignal = dataBlock(:);
 sizeTrain = length(ofdmStream);
 
 % Channel
+tic
 [simin,nbsecs,fs] = initparams(ofdmStream,pulse, Lfilter ,fs);
 sim('recplay');
 out = simout.signals.values;
@@ -102,7 +102,8 @@ HEstimated = 20*log10(abs(HEstimated));
 
 % PLOTS
 
-refreshRate = Nframe*(Lt)/fs
+time = toc;
+refreshRate = 1/time; %Nframe*log2(M)/(fs*sqrt(Ld+Lt)) %Nframe*Lt/(fs*log2(M))
 
 max_h = max(abs(hEstimated(:)));
 max_H = max(abs(HEstimated(:)));
@@ -124,8 +125,8 @@ for i=1:size(hEstimated,2)
     title('Channel in frequency domain (no DC)');
     axis([-inf inf min_H max_H])
    
-    if i*Nframe<length(rxBitStream)
-        imageRx = bitstreamtoimage(rxBitStream(1:i*Nframe), imageSize, bitsPerPixel);
+    if floor(i*length(rxBitStream)/size(hEstimated,2))<length(rxBitStream)
+        imageRx = bitstreamtoimage(rxBitStream(1:floor(i*length(rxBitStream)/size(hEstimated,2))), imageSize, bitsPerPixel);
     else
         imageRx = bitstreamtoimage(rxBitStream, imageSize, bitsPerPixel);
     end

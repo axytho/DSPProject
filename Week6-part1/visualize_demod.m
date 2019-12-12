@@ -7,7 +7,7 @@ Lt = 1; % controls size of our data block
 Ld = 4;
 
 fs= 16000;
-M=4;
+M=8;
 Nframe = 2002;
 SNR = 300;
 Lfilter = 400;
