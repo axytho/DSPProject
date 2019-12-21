@@ -5,7 +5,7 @@
 %set by user
 Lt = 5; %controls size of our data block
 fs= 16000;
-M=8;
+M=64;
 Nframe = 2002;
 
 SNR = 300;

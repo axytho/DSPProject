@@ -3,7 +3,7 @@ close all;
 [bitStream, imageData, colorMap, imageSize, bitsPerPixel] = imagetobitstream('image.bmp');
 
 %set by user
-Lt = 3; %no difference whether we're using 1 our 5
+Lt = 8; %no difference whether we're using 1 our 5
 Ld = 7;
 fs= 16000;
 M=8;

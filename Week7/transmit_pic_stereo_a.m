@@ -68,7 +68,7 @@ ofdmSignal = dataBlock(:);
 % OFDM modulation
 [ofdmStream1, ofdmStream2, remainder] = ofdm_mod_stereo(ofdmSignal, Nframe, Lprefix, a, b);
 
-SNR = 35;
+SNR = 100;
 % Channel
 Received1 = filter(randomImpulseResponse1, 1, ofdmStream1);
 Received2 = filter(randomImpulseResponse2, 1, ofdmStream2);

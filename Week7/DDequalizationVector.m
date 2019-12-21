@@ -1,9 +1,9 @@
 M = 4;
 channelChangeRate = 0.0001;
 iterations = 76;
-%Hk = [ones(12, 1) * (0.5+0.6j); ones(65, 1) * (0.5+0.9j)];%; ones(300, 1) * (0.52+0.59j); ones(400, 1) * (0.51+0.55j)];
+Hk = [ones(12, 1) * (0.5+0.6j); ones(65, 1) * (0.5+0.9j)];%; ones(300, 1) * (0.52+0.59j); ones(400, 1) * (0.51+0.55j)];
 t = 1:(iterations+1);
-Hk = [0.3+0.03*t + 0.4*j+0.02*t*j].';
+%Hk = [0.3+0.03*t + 0.4*j+0.02*t*j].';
 bits = randi([0, 1], (iterations+1)*log2(M), 1);
 Xk = qam_mod(bits, M);
 Nk = 0.3;
